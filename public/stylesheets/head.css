@@ -1,0 +1,128 @@
+body {
+	background: #2a2c3b;
+	font-size: 14px;
+}
+
+.caret {
+	width: 0;
+	height: 0;
+	border: 6px solid transparent;
+	border-top-color: #fff;
+	position: absolute;
+	left: 50%;
+	top: 36px;
+	margin-left: -6px;
+}
+.t {
+	color: #fff;
+	height: 30px;
+}
+
+.t .time {
+	color: #999;
+	font-size: 14px;
+	padding-top: 3px;
+}
+
+.m-c {
+	width: 980px;
+	margin: 0 auto;
+}
+
+.t li {
+	margin-top: 3px;
+}
+
+.install {
+	padding-top: 3px;
+	margin-left: 6px;
+	margin-right: 6px;
+}
+
+.t .install a {
+	color: #f0ad4e;
+	font-weight: bold;
+}
+
+.logo {
+	height: 90px;
+	background: #313446;
+}
+
+.logo-box img {
+	margin-top: 10px;
+}
+
+.btn-box {
+	padding-top: 20px;
+}
+
+.btn {
+	display: inline-block;
+    padding: 6px 12px;
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.42857143;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.btn-regist {
+	background: #ec971f;
+	color: #fff;
+	margin-left: 20px;
+}
+
+.nav-box {
+	height: 50px;
+	color: #fff;
+}
+
+.nav-box li {
+	line-height: 50px;
+	padding: 0 10px;
+	text-align: center;
+	position: relative;
+}
+
+.drop-down {
+	height: 90px;
+	background: #232532;
+	position: absolute;
+	display: none;
+}
+
+
+.game-category > .item {
+	height: 60px;
+	margin-top: 10px;
+	padding: 0 30px;
+	border-right: 1px solid #3b3d50;
+}
+
+.item > p {
+	line-height: 20px;
+	text-align: center;
+	margin-top: -18px;
+	color: #ccc;
+}
+
+.home-left {
+	color: #fff;
+	text-align: center;
+	font-size: 30px;
+	font-weight: bolder;
+	padding-top: 40px;
+}
