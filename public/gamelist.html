@@ -12,10 +12,10 @@
 	}
 
 	.games-box {
-		height: 600px;
 		background: #313446;
 		margin-top: 20px;
 		color: #fff;
+		padding-bottom: 20px;
 	}
 
 	.game-provider {
@@ -46,7 +46,6 @@
 
 	.games {
 		width: 770px;
-		height: 400px;
 		margin: 0 auto;
 		margin-top: 20px;
 	}
@@ -68,6 +67,7 @@
 
 	.games li img {
 		margin: 4px 0;
+		width: 100%;
 	}
 	.games li p {
 		background: #3b3d50;
@@ -75,32 +75,306 @@
 		line-height: 34px;
 	}
 
+	.none-game {
+		display: none;
+		margin: 0 auto;
+		width: 80%;
+		padding: 15px;
+	    margin-bottom: 20px;
+	    border: 1px solid transparent;
+	    border-radius: 4px;
+		color: #31708f;
+	    background-color: #d9edf7;
+	    border-color: #bce8f1;
+	    margin-top: 20px;
+	}
+	
+	.pagenation {
+		text-align: center;
+	}
+	.pagenation li {
+		display: inline-block;
+		cursor: pointer;
+		background: #3b3d4f;
+		padding: 4px 8px;
+		border-radius: 3px;
+
+	}
+
 </style>
+<script src="/javascripts/ajax.js"></script>
 <script>
 	window.onload = function () {
-		var aDrops = document.getElementsByClassName('drop-down')
-		var aGameMenus = document.getElementById('gameMenu').children
+		var oProviderBtnBox = document.getElementById('gameProviders')
+		var oGameTypesBox = document.getElementById('gameTypes')
+		var oGamesBox = document.getElementById('gamesBox')
+		var oBtnBox = document.getElementById('pagenation')
+		var aBtns = oBtnBox.children
 
-		var clientW = document.documentElement.clientWidth || document.body.clientWidth
+		var aTypes
 
-		for(var i = 0; i < aDrops.length; i++) {
-			aDrops[i].style.width = clientW + 'px'
-			aDrops[i].style.left = - aDrops[i].parentNode.offsetLeft + 'px'
-		}
+		var aGameProviders = oProviderBtnBox.children
+		var currentProviderId
+		var currenGameTypeId
+		var currentPageNum = 1
 
-		for(var i = 1; i < aGameMenus.length; i++) {
-			aGameMenus[i].onmouseenter = function () {
-				for(var i = 1; i < aGameMenus.length; i++) {
-					aGameMenus[i].children[0].style.display = 'none'
+
+		var aGameTypes = []
+
+		var totalCount
+
+		// aGameProviders[0].onmouseenter = function () {}
+		// aGameProviders[1].onmouseenter = function () {}
+		// aGameProviders[2].onmouseenter = function () {}
+		// aGameProviders[3].onmouseenter = function () {}
+
+		for(var i = 0; i < aGameProviders.length; i++) {
+
+			if (aGameProviders[i].className.indexOf('active') !== -1) {
+				currentProviderId = aGameProviders[i].getAttribute('data-id')
+			}
+			aGameProviders[i].onmouseenter = function () {
+				for(var j = 0; j < aGameProviders.length; j++) {
+					if (aGameProviders[j].getAttribute('data-id') != currentProviderId) {
+						aGameProviders[j].className = 'game-provider'
+					}
 				}
-				this.children[0].style.display = 'block'
+				this.className = 'game-provider active'
+
 			}
 
-			aGameMenus[i].onmouseleave = function () {
-				this.children[0].style.display = 'none'
+			aGameProviders[i].onmouseleave = function () {
+				if (this.getAttribute('data-id') != currentProviderId) {
+					this.className = 'game-provider'
+				}
 			}
+
+			aGameProviders[i].onclick = function () {
+				for(var j = 0; j < aGameProviders.length; j++) {
+					aGameProviders[j].className = 'game-provider'
+				}
+				currentProviderId = this.getAttribute('data-id')
+				this.className = 'game-provider active'
+
+				handleGameTypes(aGameTypes)
+			}
+		}
+
+
+		console.log('aTypes')
+		console.log(aTypes)
+		
+
+		ajax({
+			url: 'http://b9088.com/member/gametype/?category=2&opt_expand=provider',
+			type: 'get',
+			success: function (resData) {
+				var data
+				try {
+					data = JSON.parse(resData)
+				} catch(e) {
+					// statements
+					console.log(e);
+				}
+
+				data.length && handleGameTypes(data)
+				console.log('gameTypeos all')
+				console.log(data)
+				aGameTypes = data || []
+			},
+			error: function (status) {
+				console.log('status')
+				console.log(status)
+			}
+		})
+
+		function  handleGameTypes (arr) {
+
+			if (!arr.length) { return }
+			oGameTypesBox.innerHTML = ''
+
+			var aGameTypes = []
+			for(var i = 0; i <arr.length; i++) {
+				if (arr[i].provider.id == currentProviderId) {
+					aGameTypes.push(arr[i])
+				}
+			}
+
+			console.log('aGameTypes')
+			console.log(aGameTypes)
+			
+			for(var i = 0; i <aGameTypes.length; i++ ) {
+				var oLi = document.createElement('li')
+				oLi.setAttribute('gameType-id', aGameTypes[i].id)
+
+				if (i == 0) {
+
+					console.log('默认的 第0个gametype 数据如下')
+					console.log(aGameTypes[i])
+
+					oLi.className = 'fl active'
+					currenGameTypeId = aGameTypes[i].id
+					fetchGames(aGameTypes[i])
+				} else {
+					oLi.className = 'fl'
+				}
+
+				oLi.innerHTML = aGameTypes[i].name
+
+				oGameTypesBox.appendChild(oLi)
+			}
+
+			aTypes =  oGameTypesBox.children
+
+			for(var i = 0; i < aTypes.length; i++) {
+				aTypes[i].onmouseenter = function () {
+					for(var i = 0; i < aTypes.length; i++) {
+						if (aTypes[i].getAttribute('gameType-id') != currenGameTypeId) {
+							aTypes[i].className = 'fl'
+						}
+					}
+					this.className = 'fl active'
+				}
+
+
+				aTypes[i].onmouseleave = function () {
+					if (this.getAttribute('gameType-id') != currenGameTypeId) {
+						this.className = 'fl'
+					}
+				}
+
+
+				aTypes[i].onclick = function () {
+					currenGameTypeId = this.getAttribute('gameType-id')
+					for(var i = 0; i < aTypes.length; i++) {
+						aTypes[i].className = 'fl'
+					}
+					this.className = 'fl active'
+
+					fetchGames({
+						id: currenGameTypeId
+					})
+
+				}
+
+
+			}
+		}
+
+
+		function fetchGames (json) {
+			console.log('json')
+			console.log(json)
+			ajax({
+				url: 'http://b9088.com/member/game/?platform=1&category=2&gametype='+ json.id +'&limit=16&offset='+(currentPageNum - 1) * 16+'&opt_expand=1',
+				type: 'get',
+				success: function (resData) {
+					var data
+					try {
+						data = JSON.parse(resData)
+						console.log('获取到的游戏们')
+						console.log(data)
+
+						handleGames(data)
+					} catch(e) {
+						// statements
+						console.log(e);
+					}
+				},
+				error: function (status) {
+					console.log('error')
+					console.log(status)
+				}
+			})
+			
+		}
+
+
+		function handleGames (arrData) {
+
+			oGamesBox.innerHTML = ''
+			if (!arrData.results.length) {
+				return document.getElementById('noneGameInfo').style.display = 'block'
+			}
+
+			totalCount = Math.ceil(arrData.count / 16)
+
+			if (totalCount <= 1) {
+				oBtnBox.style.display = 'none'
+			} else {
+				oBtnBox.style.display = 'block'
+			}
+
+			aBtns[aBtns.length - 1].innerHTML = '共'+ totalCount +'页'
+
+			document.getElementById('noneGameInfo').style.display = 'none'
+			for(var i = 0; i < arrData.results.length; i++) {
+				var oLi = document.createElement('li')
+
+				if (!(i % 4)) {
+					oLi.className = 'fl first'
+				} else {
+					oLi.className = 'fl'
+				}
+
+				oLi.innerHTML = '<img height="128" src="'+arrData.results[i].icon+'" alt="">\
+								<p>'+ arrData.results[i].name +'</p>'
+
+
+				oGamesBox.appendChild(oLi)
+				
+			}
+		}
+
+
+		aBtns[3].onclick = function () {
+			if (currentPageNum >= totalCount) {
+				return
+			}
+			currentPageNum++
+			aBtns[2].innerHTML = '当前:'+ currentPageNum +''
+			fetchGames({
+				id: currenGameTypeId
+			})
 
 		}
+
+
+		aBtns[1].onclick = function () {
+			if (currentPageNum <=1) {
+				return
+			}
+			currentPageNum--
+			aBtns[2].innerHTML = '当前:'+ currentPageNum +''
+			fetchGames({
+				id: currenGameTypeId
+			})
+
+		}
+
+
+		aBtns[0].onclick = function () {
+			if (currentPageNum <=1) {
+				return
+			}
+			currentPageNum = 1
+			aBtns[2].innerHTML = '当前:'+ currentPageNum +''
+			fetchGames({
+				id: currenGameTypeId
+			})
+
+		}
+
+
+		aBtns[4].onclick = function () {
+			currentPageNum = totalCount
+			aBtns[2].innerHTML = '当前:'+ currentPageNum +''
+			fetchGames({
+				id: currenGameTypeId
+			})
+
+		}
+
 	}
 </script>
 <body style="height: 1400px">
@@ -247,14 +521,14 @@
 	</div>
 	<div class="ad-banner"></div>
 	<div class="games-box m-c">
-		<div class="game-providers">
-			<div class="game-provider">KUMA电子游艺</div>
-			<div class="game-provider">AG电子游艺</div>
-			<div class="game-provider active">MG电子游艺</div>
-			<div class="game-provider">PT电子游艺</div>
+		<div class="game-providers" id="gameProviders">
+			<div class="game-provider" data-id="7">KUMA电子游艺</div>
+			<div class="game-provider active" data-id="1">AG电子游艺</div>
+			<div class="game-provider" data-id="2">MG电子游艺</div>
+			<div class="game-provider" data-id="3">PT电子游艺</div>
 		</div>
-		<ul class="game-types clearfix">
-			<li class="fl active">奖金老虎机</li>
+		<ul class="game-types clearfix" id="gameTypes">
+			<!-- <li class="fl active">奖金老虎机</li>
 			<li class="fl">角子机</li>
 			<li class="fl">角子机</li>
 			<li class="fl">奖金老虎机</li>
@@ -265,10 +539,10 @@
 			<li class="fl">奖金老虎机</li>
 			<li class="fl">奖金老虎机</li>
 			<li class="fl">奖金老虎机</li>
-			<li class="fl">奖金老虎机</li>
+			<li class="fl">奖金老虎机</li> -->
 		</ul>
-		<ul class="games">
-			<li class="fl first">
+		<ul class="games clearfix" id="gamesBox">
+			<!-- <li class="fl first">
 				<img height="128" src="https://jaguar-st8ging.azureedge.net/gameicons/btn_thephantomoftheopera.jpg" alt="">
 				<p>我是大牙培训</p>
 			</li>
@@ -287,8 +561,17 @@
 			<li class="fl first">
 				<img height="128" src="https://jaguar-st8ging.azureedge.net/gameicons/btn_thephantomoftheopera.jpg" alt="">
 								<p>我是大牙培训</p>
-			</li>
+			</li> -->
 		</ul>
+		<ul class="pagenation" id="pagenation">
+			<li>首页</li>
+			<li>上一页</li>
+			<li>当前:1</li>
+			<li>下一页</li>
+			<li>尾页</li>
+			<li>共6页</li>
+		</ul>
+		<p class="none-game" id="noneGameInfo">抱歉, 暂无该类型游戏, 请切换游戏类型</p>
 	</div>
 </body>
 </html>
