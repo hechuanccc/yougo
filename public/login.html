@@ -7,33 +7,79 @@
 </head>
 <style>
 
+	.login-box {
+		width: 950px;
+		height: 170px;
+		background: #fff;
+		margin: 0 auto;
+		border-radius: 5px;
+		margin-top: 40px;
+		padding-left: 20px;
+		padding-top: 30px;
+	}
 
+	.login-box button {
+		width: 70px;
+		height: 20px;
+		background: skyblue;
+		color: #fff;
+		cursor: pointer;
+	}
+
+	.info {
+		color: red;
+		display: none;
+	}
 </style>
 <script src="/javascripts/ajax.js"></script>
 <script src="/javascripts/cookie.js"></script>
 <script>
 	window.onload = function () {
-		var aLogin = document.getElementsByClassName('btn-box')
+		var oBtn = document.getElementById('login')
+		var aInps = document.getElementsByTagName('input')
+		var oLoginInfo = document.getElementById('loginInfo')
 
-		var clientW = document.documentElement.clientWidth || document.body.clientWidth
+		oBtn.onclick = function () {
+			
+			if (!aInps[0].value || !aInps[1].value) return
 
-		
+			ajax({
+				url: 'http://b9088.com/member/login/',
+				type: 'POST',
+				data: {
+					username: aInps[0].value,
+					password: aInps[1].value
+				},
+				success: function (resData) {
+					var data
+
+					try {
+						// statements
+						data = JSON.parse(resData)
+						console.log('success')
+						console.log(data)
+						oLoginInfo.style.display = 'none'
 
 
-		var isLogin = getCookie('tokenTest')
+						addCookie('tokenTest', data.access_token, 3)
 
-		if (!isLogin) {
-			aLogin[1].style.display = 'none'
-			aLogin[0].style.display = 'block'
-		} else {
-			aLogin[0].style.display = 'none'
-			aLogin[1].style.display = 'block'
+						// window.open('/home.html')
+						document.getElementById('toHome').click()
+					} catch(e) {
+						// statements
+						console.log(e);
+					}
+				},
+				error: function (status) {
+					console.log('error')
+					console.log(status)
+					oLoginInfo.style.display = 'block'
+				} 
+			})
 		}
-
-
 	}
 </script>
-<body style="height: 1400px">
+<body>
 	<div class="head">
 		<div class="head-box m-c">
 			<div class="t clearfix">
@@ -53,16 +99,8 @@
 			<div class="logo-box m-c clearfix">
 				<img class="fl" height="70" src="https://jaguar-st8ging.azureedge.net/website/home-page/icon/logo_GyiEuqR.png" alt="">
 				<div class="btn-box fr">
-					<button class="btn btn-login"><a href="/login.html">登录</a></button>
+					<button class="btn btn-login">登录</button>
 					<button class="btn btn-regist">免费注册</button>
-				</div>
-				<div class="btn-box fr">
-					<ul class="clearfix">
-						<li class="fl">立即存款</li>
-						<li class="fl">立即取款</li>
-						<li class="fl">额度转换</li>
-						<li class="fl">站内消息</li>
-					</ul>
 				</div>
 			</div>
 		</div>
@@ -71,7 +109,7 @@
 			<div class="nav-box m-c clearfix">
 				<ul class="fl clearfix" id="gameMenu">
 					<li class="fl">首页</li>
-					<!-- <li class="fl">
+					<li class="fl">
 						真人视讯
 						<div class="drop-down">
 							<div class="game-category m-c clearfix">
@@ -173,7 +211,7 @@
 							</div>
 						</div>
 						<div class="caret"></div>
-					</li> -->
+					</li>
 				</ul>
 				<ul class="fr">
 					<li class="fl">优惠活动</li>
@@ -183,11 +221,14 @@
 			</div>
 		</div>
 	</div>
-		
-	<img src="https://jaguar-st8ging.azureedge.net/gamecategory/electric.jpg" alt="">
-	<div class="ad-banner"></div>
-	<p class="home-left">这是首页</p>
-
-	<script src="/javascripts/head.js"></script>
+	<div class="login-box">
+		用户名: <input type="text" placeholder="请输入账号">
+		<br />
+		密码: <input type="password" placeholder="请输入密码">
+		<br />
+		<p id="loginInfo" class="info">用户名或密码不正确</p>
+		<button id="login">登录</button>
+	</div>
+	<a id="toHome" href="/home.html"></a>
 </body>
 </html>

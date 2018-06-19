@@ -119,6 +119,20 @@ body {
 	color: #ccc;
 }
 
+.btn-box {
+	display: none;
+}
+
+.btn-box li {
+	color: #fff;
+	margin-left: 10px;
+	cursor: pointer;
+}
+
+.btn-box li:hover {
+	color: yellow;
+}
+
 .home-left {
 	color: #fff;
 	text-align: center;
