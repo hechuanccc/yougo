@@ -88,9 +88,15 @@ function handleGameCategory (arr) {
 	console.log('aItems')
 	console.log(aItems)
 
+
+
 	for(var i = 0; i < aItems.length; i++) {
 		aItems[i].onclick = function () {
-			window.open('/gamelist.html?providerId=' + this.getAttribute('data-providerid') + '&name=yayaya&pwd=12345')
+			var YOUGODATA = {
+				providerId: this.getAttribute('data-providerid')
+			}
+			window.localStorage.setItem('providerId', JSON.stringify(YOUGODATA))
+			window.open('/gamelist.html', '_self')
 		}
 	}
 

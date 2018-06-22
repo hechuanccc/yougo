@@ -104,7 +104,22 @@
 </style>
 <script src="/javascripts/ajax.js"></script>
 <script>
+
+	function searchToObj (str) {
+		str = str.replace('?', '')
+		var arr = str.split('&')
+		var obj = {}
+		for(var i = 0; i < arr.length; i++) {
+			var brr = arr[i].split('=')
+			obj[brr[0]] = brr[1]
+		}
+		return obj
+	}
 	window.onload = function () {
+
+
+		console.log('查询参数字符串是')
+		console.log(window.location.search)
 		var oProviderBtnBox = document.getElementById('gameProviders')
 		var oGameTypesBox = document.getElementById('gameTypes')
 		var oGamesBox = document.getElementById('gamesBox')
@@ -114,7 +129,18 @@
 		var aTypes
 
 		var aGameProviders = oProviderBtnBox.children
+		// var currentProviderId = searchToObj(window.location.search).providerId 
+
 		var currentProviderId
+
+		try {
+			currentProviderId = JSON.parse(window.localStorage.getItem('providerId')).providerId
+			// statements
+		} catch(e) {
+			// statements
+			console.log(e);
+		}
+
 		var currenGameTypeId
 		var currentPageNum = 1
 
@@ -130,8 +156,8 @@
 
 		for(var i = 0; i < aGameProviders.length; i++) {
 
-			if (aGameProviders[i].className.indexOf('active') !== -1) {
-				currentProviderId = aGameProviders[i].getAttribute('data-id')
+			if (aGameProviders[i].getAttribute('data-id') == currentProviderId) {
+				aGameProviders[i].className = 'game-provider active'
 			}
 			aGameProviders[i].onmouseenter = function () {
 				for(var j = 0; j < aGameProviders.length; j++) {
@@ -159,11 +185,6 @@
 				handleGameTypes(aGameTypes)
 			}
 		}
-
-
-		console.log('aTypes')
-		console.log(aTypes)
-		
 
 		ajax({
 			url: 'http://b9088.com/member/gametype/?category=2&opt_expand=provider',
@@ -289,7 +310,6 @@
 			
 		}
 
-
 		function handleGames (arrData) {
 
 			oGamesBox.innerHTML = ''
@@ -326,7 +346,6 @@
 			}
 		}
 
-
 		aBtns[3].onclick = function () {
 			if (currentPageNum >= totalCount) {
 				return
@@ -338,7 +357,6 @@
 			})
 
 		}
-
 
 		aBtns[1].onclick = function () {
 			if (currentPageNum <=1) {
@@ -352,7 +370,6 @@
 
 		}
 
-
 		aBtns[0].onclick = function () {
 			if (currentPageNum <=1) {
 				return
@@ -364,7 +381,6 @@
 			})
 
 		}
-
 
 		aBtns[4].onclick = function () {
 			currentPageNum = totalCount
@@ -406,7 +422,7 @@
 		<div class="nav">
 			<div class="nav-box m-c clearfix">
 				<ul class="fl clearfix" id="gameMenu">
-					<li class="fl">首页</li>
+					<li class="fl" onclick="window.open('/home.html', '_self')">首页</li>
 					<li class="fl">
 						真人视讯
 						<div class="drop-down">
@@ -523,7 +539,7 @@
 	<div class="games-box m-c">
 		<div class="game-providers" id="gameProviders">
 			<div class="game-provider" data-id="7">KUMA电子游艺</div>
-			<div class="game-provider active" data-id="1">AG电子游艺</div>
+			<div class="game-provider" data-id="1">AG电子游艺</div>
 			<div class="game-provider" data-id="2">MG电子游艺</div>
 			<div class="game-provider" data-id="3">PT电子游艺</div>
 		</div>

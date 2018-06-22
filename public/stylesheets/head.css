@@ -110,6 +110,7 @@ body {
 	margin-top: 10px;
 	padding: 0 30px;
 	border-right: 1px solid #3b3d50;
+	cursor: pointer;
 }
 
 .item > p {
